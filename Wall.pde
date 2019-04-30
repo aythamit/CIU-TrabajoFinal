@@ -7,8 +7,6 @@ class Wall{
   int radius = 50;
   int xWindow, yWindow;
   int colsWalls, rowsWalls;
- ArrayList<Pipe> pipes = new ArrayList();
- int x = 400;
  
   Wall(int c, int r){
     colsWalls = c;
@@ -17,8 +15,8 @@ class Wall{
   }
   
   void generaMuro(int ys){
-    
-    translate(0,ys,0);
+    if(ys == 0) randomWindow();
+    translate(300,ys,0);
     fill(color(0,255,0));
     stroke(255);
     for (int i = 1; i <= colsWalls; i++) {
