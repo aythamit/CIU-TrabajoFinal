@@ -8,6 +8,7 @@ class Wall{
   int xWindow, yWindow;
   int colsWalls, rowsWalls;
  
+  color colorMuro = color(42,142,47);
   Wall(int c, int r){
     colsWalls = c;
     rowsWalls = r;
@@ -17,8 +18,9 @@ class Wall{
   void generaMuro(int ys){
     if(ys == 0) randomWindow();
     translate(300,ys,0);
-    fill(color(0,255,0));
-    stroke(255);
+    fill(colorMuro);
+    //stroke(0);
+    noStroke();
     for (int i = 1; i <= colsWalls; i++) {
     if (xWindow != i) { 
       // dibujar pipe completa

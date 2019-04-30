@@ -17,6 +17,7 @@ int wallsDistance, terrainSpeed;
 int yConst = 600;
 int zConst = 100;
 
+color backgroundColor = 0x72a8e2;
 Bird bird;
 ArrayList<Integer> wallPosition = new ArrayList();
 ArrayList<Wall> walls = new ArrayList();
@@ -24,7 +25,7 @@ ArrayList<Wall> walls = new ArrayList();
 void initVariables(){
   cols = 5;
   rows = 3;
-  wallsDistance = 350;
+  wallsDistance = 300;
   terrainSpeed = 3;
   bird = new Bird();
   walls.add(new Wall(cols,rows));
@@ -59,18 +60,18 @@ void generateGravity(){
 
 void setup() {
   size(1024, 600, P3D);
-  background(0);
+  background(backgroundColor);
   initVariables();
 } 
 
 
 void draw() {
-  background(0);
+  background(backgroundColor);
+  lights();
   noFill();
   translate( width/2, height/2);
   rotateX(PI/3);
   translate( -width/2, -height/2);
-  
   
   bird.display();
   generateGravity();
@@ -85,13 +86,26 @@ void draw() {
     if (wallPosition.get(i) >= height){
       wallPosition.set(i, 0);
     }
-  
   //delay(500);
   }
   
+  dibujaCarretera();
+
   //colision();
 }
 
+void dibujaCarretera(){
+  pushMatrix();
+  fill(0);
+  beginShape();
+  vertex(300,0,0);
+  vertex(width-300,0,0);
+  vertex(width-100,height,0);
+  vertex(0,height, 0);
+  endShape(CLOSE);
+  popMatrix();
+  
+}
 
 /*void colision(){
   println("PajaroX : " + bird.x + " terreno : " + (size*colVentana) + "\t ZBird "+ (size*(colVentana+sizeVentana)) + " z = " + z);
