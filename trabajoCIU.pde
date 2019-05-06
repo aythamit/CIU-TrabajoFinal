@@ -7,7 +7,7 @@ AudioPlayer groove;
 float gravity;
 float birdHeigth;
 float strength;
-
+int score = 0;
 
 int w = 1024;
 
@@ -22,11 +22,12 @@ Bird bird;
 ArrayList<Integer> wallPosition = new ArrayList();
 ArrayList<Wall> walls = new ArrayList();
 
+boolean lose = true;
 void initVariables(){
   cols = 5;
   rows = 3;
   wallsDistance = 300;
-  terrainSpeed = 3;
+  terrainSpeed = 2;
   bird = new Bird();
   walls.add(new Wall(cols,rows));
   walls.add(new Wall(cols,rows));
@@ -66,6 +67,7 @@ void setup() {
 
 
 void draw() {
+  if(lose) noLoop();
   background(backgroundColor);
   lights();
   noFill();
@@ -73,25 +75,27 @@ void draw() {
   rotateX(PI/3);
   translate( -width/2, -height/2);
   
-  bird.display();
+ 
   generateGravity();
-  for(int i = 0; i < walls.size(); i++){  // 0 - 1 0 -- 150
+  for(int i = 0; i < walls.size(); i++){
     pushMatrix();
     walls.get(i).generaMuro(wallPosition.get(i));
     popMatrix();
   }
-  
+   bird.display();
   for(int i = 0; i<wallPosition.size(); i++){
     wallPosition.set(i, wallPosition.get(i) + terrainSpeed);
+    if(wallPosition.get(i) >= height - 50 && wallPosition.get(i) < height){
+      println("COLISION DE " + i);
+      colision(i);
+    }
     if (wallPosition.get(i) >= height){
       wallPosition.set(i, 0);
     }
   //delay(500);
   }
-  
   dibujaCarretera();
-
-  //colision();
+  
 }
 
 void dibujaCarretera(){
@@ -106,17 +110,59 @@ void dibujaCarretera(){
   popMatrix();
   
 }
+boolean colisionX(int muro){
+  int inicioHuecoX = 300 + (walls.get(muro).xWindow-1)*100 - 50;
+  int finHuecoX =  300 + (walls.get(muro).xWindow)*100 - 50;
+  println("X => ["+inicioHuecoX+"] < " + bird.x +" > ["+finHuecoX+"]");
+  if(bird.x < inicioHuecoX || bird.x > finHuecoX){
+    return true;
+  }else{
+  return false;
+  }
+}
 
-/*void colision(){
-  println("PajaroX : " + bird.x + " terreno : " + (size*colVentana) + "\t ZBird "+ (size*(colVentana+sizeVentana)) + " z = " + z);
-  if( (wallPosition >= h && wallPosition < yConst) && (bird.x < size*colVentana || bird.x > size*(colVentana+sizeVentana)) || (bird.z > z) ){
+boolean colisionZ(int muro){
+  int inicioHuecoZ = (walls.get(muro).yWindow-1)*100;
+  int finHuecoZ =  (walls.get(muro).yWindow)*100 - 50;
+  switch(walls.get(muro).yWindow){
+    case 1:
+      inicioHuecoZ = 0;
+      finHuecoZ = 20;
+      break;
+    case 2 :
+      inicioHuecoZ = 40;
+      finHuecoZ = 110;
+      break;
+     case 3:
+      inicioHuecoZ = 140;
+      finHuecoZ = 220;
+      break;
+  }
+  println("Z => ["+inicioHuecoZ+"] < " + bird.z +" > ["+finHuecoZ+"]");
+  if(bird.z < inicioHuecoZ || bird.z > finHuecoZ){
+    return true;
+  }else{
+  return false;
+  }
+}
+void colision(int muro){
+  //
+  if(colisionX(muro) || colisionZ(muro)) {
+    lose = true;
+  }else {
+    score++;
+    println("Score : " + score);
+  }
+  //println("Pajaro X : " + bird.x + " Muro X : ");
+  /*if( (wallPosition >= h && wallPosition < yConst) && (bird.x < size*colVentana || bird.x > size*(colVentana+sizeVentana)) || (bird.z > z) ){
     text("PERDISTE SOCIO" ,w/2, 20);
     noLoop();
-  }
-}*/
+  }*/
+}
 
 void mousePressed() {
-  noLoop();
+  lose=false;
+  //noLoop();
 }
 
 void mouseReleased() {
@@ -134,8 +180,8 @@ void keyPressed() {
      if ( key == 'z' ) { bird.z-=10; }
         else if ( key == 'x') { bird.z+=10; }
       if ( key == CODED) {
-        if ( keyCode == UP) { bird.y-=10; } 
-        else if ( keyCode == DOWN) { bird.y+=10; }
+        if ( keyCode == UP) { bird.z+=10; } 
+        else if ( keyCode == DOWN) { if(bird.z > 0)bird.z-=10; }
         else if ( keyCode == LEFT ) { bird.x-=bird.speed; }
         else if ( keyCode == RIGHT) { bird.x+=bird.speed; }
       }
