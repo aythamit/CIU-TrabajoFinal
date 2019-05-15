@@ -1,4 +1,5 @@
 
+// https://www.openprocessing.org/sketch/396286/
 class Wall{
  
   int sides= 20;
@@ -46,7 +47,7 @@ class Wall{
   void randomWindow() {
     xWindow =int(random(1, colsWalls));
     yWindow = int(random(1, rowsWalls));
-      xWindow = 3;
+    xWindow = 3;
   }
   
     void crearPipe() {
