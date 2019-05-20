@@ -196,6 +196,7 @@ void saving() {
 }
 
 void dibujaCarretera() {
+  noStroke();
   int alturaCarretera = -50;
   pushMatrix();
   fill(0);
