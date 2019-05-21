@@ -36,19 +36,19 @@ int wallsDistance, terrainSpeed;
 int yConst = 600;
 int zConst = 100;
 
-color backgroundColor = 0x72a8e2;
 Bird bird;
 ArrayList<Integer> wallPosition = new ArrayList();
 ArrayList<Wall> walls = new ArrayList();
 
 PFont font;
-PImage bg;
+PImage iniBg, bg;
 
 void setup() {
   size(1024, 600, P3D);
   font = createFont( "Arial", 20);
-  bg = loadImage("/data/FlappyCat.png");
-  background(bg);
+  iniBg = loadImage("/data/FlappyCat.png");
+  bg = loadImage("/data/background.png");
+  background(iniBg);
   
   cam = new Capture(this, 640, 480);
   cam.start(); 
@@ -116,11 +116,11 @@ void draw() {
 }
 
 void inicio() {
-  background(bg);
+  background(iniBg);
 }
 
 void run() {
-  background(backgroundColor);
+  background(bg);
   lights();
   noFill();
   translate( width/2, height/2);
