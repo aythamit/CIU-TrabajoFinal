@@ -52,7 +52,7 @@ PImage noAudio;
 
 void setup() {
   size(1024, 600, P3D);
-  font = createFont( "Arial", 20);
+  font = createFont( "Arial", 12);
   iniBg = loadImage("/data/FlappyCat.png");
   bg = loadImage("/data/background.png");
   background(iniBg);
@@ -170,15 +170,15 @@ void run() {
     if (wallPosition.get(i) >= height) {
       wallPosition.set(i, 0);
       score++;
+      if(score % 10 == 0) terrainSpeed++;
       println("Score : " + score);
     }
   }
 
   dibujaSonidoIcon();
+  dibujaScore();
   if (cam.available()) {
-
     cam.read();
-
     //Obtiene la imagen de la cámara
     img.copy(cam, 0, 0, cam.width, cam.height, 
       0, 0, img.width, img.height);
@@ -267,6 +267,19 @@ void dibujaCarretera() {
   var+=terrainSpeed;
 }
 
+void dibujaScore() {
+  String info= "Score: " + score;
+  textFont(font);
+  textAlign(CENTER);
+  pushMatrix();
+  translate(width/2, 630, 195);
+  strokeWeight(6);
+  rotateX(radians(-70));
+  fill(255, 255, 255);
+  text(info, 0, 0, 0);
+  rotateX(radians(70));
+  popMatrix();
+}
 void dibujaLineasCarretera(int alturaCarretera) {
   int mitad = width / 2;
   fill(255);
