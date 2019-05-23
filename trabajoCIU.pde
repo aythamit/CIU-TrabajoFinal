@@ -364,6 +364,7 @@ void savelog() {
 
 void printTable() {
   fill(100); 
+  textAlign(LEFT);
   stroke(255);
   rect(width/2-130, height/2+170, 260, 40);
   fill(255); 
