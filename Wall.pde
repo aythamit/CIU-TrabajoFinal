@@ -47,7 +47,7 @@ class Wall {
   void randomWindow() {
     xWindow =int(random(1, colsWalls));
     yWindow = int(random(1, rowsWalls));
-    xWindow = 3;
+    //xWindow = 3;
   }
 
   void crearPipe() {

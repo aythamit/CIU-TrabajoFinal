@@ -11,7 +11,8 @@ import org.opencv.objdetect.Objdetect;
 
 int state;
 String name = "";
-int inc; int col;
+int inc; 
+int col;
 
 Capture cam;
 CVImage img;
@@ -42,6 +43,12 @@ ArrayList<Wall> walls = new ArrayList();
 
 PFont font;
 PImage iniBg, bg;
+AudioPlayer music;
+boolean au =false;
+PImage audio;
+PImage noAudio;
+//Musica
+
 
 void setup() {
   size(1024, 600, P3D);
@@ -49,24 +56,36 @@ void setup() {
   iniBg = loadImage("/data/FlappyCat.png");
   bg = loadImage("/data/background.png");
   background(iniBg);
-  
+
   cam = new Capture(this, 640, 480);
   cam.start(); 
-  
+
   System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
   println(Core.VERSION);
-  
+
   img = new CVImage(cam.width, cam.height);
+
   faceFile = "haarcascade_frontalface_default.xml";
   face = new CascadeClassifier(dataPath(faceFile));
-  
+
   fill(255);
   textSize(20);
   col = 255;
   inc = -5;
-  
-  try { new File(sketchPath("") + "/data/db_puntuacion.txt").createNewFile(); } catch (IOException ioe) { System.out.println(ioe); }  
+
+
+
+  try { 
+    new File(sketchPath("") + "/data/db_puntuacion.txt").createNewFile();
+  } 
+  catch (IOException ioe) { 
+    System.out.println(ioe);
+  }  
   resetGame();
+
+  audio = loadImage("/data/audio.png");
+  noAudio = loadImage("/data/noAudio.png");
+  music = minim.loadFile("music.mp3", 2048);
 }
 
 void generateGravity() {
@@ -87,7 +106,7 @@ void generateGravity() {
 void resetGame() { 
   state = 0;
   name = "";
-  
+
   score = 0;
   cols = 5;
   rows = 3;   
@@ -102,16 +121,21 @@ void resetGame() {
     minim = new Minim(this);
     in = minim.getLineIn();
   }
-  
+
   birdHeigth = 125;
   gravity = 2;
 }
 
 void draw() {  
   switch (state) {
-    case 0:  inicio(); break;
-    case 1:  run();    break;
-    default: end();
+  case 0:  
+    inicio(); 
+    break;
+  case 1:  
+    run();    
+    break;
+  default: 
+    end();
   }
 }
 
@@ -120,6 +144,7 @@ void inicio() {
 }
 
 void run() {
+  println(mouseX + " , " + mouseY);
   background(bg);
   lights();
   noFill();
@@ -130,7 +155,7 @@ void run() {
 
   dibujaCarretera();
   generateGravity();
-  
+
   for (int i = 0; i < walls.size(); i++) {
     pushMatrix();
     walls.get(i).generaMuro(wallPosition.get(i));
@@ -148,6 +173,8 @@ void run() {
       println("Score : " + score);
     }
   }
+
+  dibujaSonidoIcon();
   if (cam.available()) {
 
     cam.read();
@@ -156,7 +183,10 @@ void run() {
     img.copy(cam, 0, 0, cam.width, cam.height, 
       0, 0, img.width, img.height);
     img.copyTo();
-
+    pushMatrix();
+    translate(0, 0, -50);
+    image(img, 300 , 400, 200,200);
+    popMatrix();
     //Imagen de grises
     Mat gris = img.getGrey();
 
@@ -171,15 +201,17 @@ void run() {
 
 void end() {   
   background(0);
-  
+
   if (state == 3) saving();
   else printTable();
-  
-  fill(255); textSize(40);
+
+  fill(255); 
+  textSize(40);
   text("HAS CONSEGUIDO " + score + " PUNTOS", 230, 70);
-  fill(col); textSize(20);
+  fill(col); 
+  textSize(20);
   text("Pulse ENTER para volver a jugar", 360, height/2+155);
-  
+
   col += inc;
   if (col >= 255 || col <= 5) {
     inc *= -1;
@@ -189,10 +221,21 @@ void end() {
 void saving() {
   fill(255);
   text("Escribe tu nombre:", 420, height/2-40);    
-  fill(100); stroke(255);
+  fill(100); 
+  stroke(255);
   rect(width/2-150, height/2-20, 300, 40);
   fill(255);
   text(name, width/2-140, height/2+8);
+}
+
+void dibujaSonidoIcon() {
+  pushMatrix();
+  if (au) {
+    image(audio, 670 , 590, 50,50);
+  } else {
+    image(noAudio, 670 , 590, 50,50);
+  }
+  popMatrix();
 }
 
 void dibujaCarretera() {
@@ -298,7 +341,8 @@ void savelog() {
       FileWriter fw = new FileWriter(new File(sketchPath("") + "/data/db_puntuacion.txt"), true);
       fw.write(name + "," + score + ";");
       fw.close();
-    } catch (IOException ioe) {
+    } 
+    catch (IOException ioe) {
       System.out.print(ioe);
     }
   }
@@ -306,29 +350,36 @@ void savelog() {
 }
 
 void printTable() {
-  fill(100); stroke(255);
+  fill(100); 
+  stroke(255);
   rect(width/2-130, height/2+170, 260, 40);
-  fill(255); textSize(20); noStroke();
+  fill(255); 
+  textSize(20); 
+  noStroke();
   text("GUARDAR PUNTUACION", width/2-115, height/2+198);
-  
+
   try {
     String str;    
     BufferedReader br = new BufferedReader(new FileReader(new File(sketchPath("") + "/data/db_puntuacion.txt")));    
     if ((str = br.readLine()) != null) {
       String[][] auxArray = pickBests(str.split(";"));
-      fill(255); textSize(25);
+      fill(255); 
+      textSize(25);
       text("RANKING", 460, 115);
-      
-      noFill(); stroke(255); textSize(20);
+
+      noFill(); 
+      stroke(255); 
+      textSize(20);
       for (int i=0; i<auxArray.length && auxArray[i][0] != null; i++) {
         rect(width/2-250, 130+i*50, 250, 40);
-        text(auxArray[i][0],  width/2-230, 160+i*50);
+        text(auxArray[i][0], width/2-230, 160+i*50);
         rect(width/2, 130+i*50, 250, 40);
-        text(auxArray[i][1],  width/2+110, 160+i*50);
-      }      
+        text(auxArray[i][1], width/2+110, 160+i*50);
+      }
     }
     br.close();
-  } catch (IOException ioe) {
+  } 
+  catch (IOException ioe) {
     System.out.println(ioe);
   }
 }
@@ -340,33 +391,45 @@ String[][] pickBests(String[] str) {
     strRanking[i] = str[i].split(",")[0];
     intRanking[i] = Integer.parseInt(str[i].split(",")[1]);
   }
-  
+
   int intTemp;
   String strTemp;  
   for (int i = 1; i < str.length; i++) {
     for (int j = i; j > 0; j--) {
-     if (intRanking[j] > intRanking[j-1]) {
-      intTemp = intRanking[j];
-      strTemp = strRanking[j];
-      intRanking[j] = intRanking[j-1];
-      strRanking[j] = strRanking[j-1];
-      intRanking[j-1] = intTemp;
-      strRanking[j-1] = strTemp;
-     }
+      if (intRanking[j] > intRanking[j-1]) {
+        intTemp = intRanking[j];
+        strTemp = strRanking[j];
+        intRanking[j] = intRanking[j-1];
+        strRanking[j] = strRanking[j-1];
+        intRanking[j-1] = intTemp;
+        strRanking[j-1] = strTemp;
+      }
     }
   }
-  
+
   String[][] ranking = new String[5][2];
   for (int i = 0; i < str.length && i<5; i++) {
     ranking[i][0] = strRanking[i];
     ranking[i][1] = Integer.toString(intRanking[i]);
   }
-  
+
   return ranking;
 }
 
 void mouseClicked() {  
-  if (state == 0) state = 1;  
+  if (state == 0) state = 1; 
+  if(state == 1){
+  if(mouseX >=width-144 &&mouseX <=width){
+    if(mouseY >= height-90 &&  mouseY<= height){
+      if(music.isPlaying()){
+         music.pause();
+      }else{
+        music.loop();
+      }
+      au = !au;
+    }
+  }
+  }
   if (state == 2) {
     if (mouseX >= width/2-130 && mouseX <= width/2+130) 
       if (mouseY >= height/2+170 && mouseY <= height/2+210)
@@ -380,13 +443,26 @@ void keyPressed() {
       if (name.length() <= 10) name += key;
   }
   switch (keyCode) {
-    case DELETE: state=2; break;
-    case ENTER: if(state > 1) savelog(); break;
-    case UP: bird.z += 10; break;
-    case DOWN: if(bird.z > 0) bird.z -= 10; break;
-    case LEFT: bird.x -= bird.speed; break;
-    case RIGHT: bird.x += bird.speed; break;
-    case 8: if(state == 3 && name.length() >= 1) name = name.substring(0,name.length()-1);
+  case DELETE: 
+    state=2; 
+    break;
+  case ENTER: 
+    if (state > 1) savelog(); 
+    break;
+  case UP: 
+    bird.z += 10; 
+    break;
+  case DOWN: 
+    if (bird.z > 0) bird.z -= 10; 
+    break;
+  case LEFT: 
+    bird.x -= bird.speed; 
+    break;
+  case RIGHT: 
+    bird.x += bird.speed; 
+    break;
+  case 8: 
+    if (state == 3 && name.length() >= 1) name = name.substring(0, name.length()-1);
   }
 }
 
