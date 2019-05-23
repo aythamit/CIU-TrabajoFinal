@@ -72,9 +72,7 @@ void setup() {
   textSize(20);
   col = 255;
   inc = -5;
-
-
-
+  
   try { 
     new File(sketchPath("") + "/data/db_puntuacion.txt").createNewFile();
   } 
@@ -141,16 +139,25 @@ void draw() {
 
 void inicio() {
   background(iniBg);
+  
+  fill(col); 
+  textSize(20);
+  text("Pulse ENTER para jugar", 390, height/2+200);
+  
+  col += inc;
+  if (col >= 255 || col <= 5) {
+    inc *= -1;
+  }
 }
 
 void run() {
   background(bg);
   lights();
   noFill();
-  translate( width/2, height/2);
+  translate(width/2, height/2);
   rotateX(radians(70));
   //rotateX(PI/3);
-  translate( -width/2, -height/2);
+  translate(-width/2, -height/2);
 
   dibujaCarretera();
   generateGravity();
@@ -274,7 +281,7 @@ void dibujaScore() {
   strokeWeight(6);
   rotateX(radians(-70));
   fill(255, 255, 255);
-  text(info, 0, 0, 0);
+  text(info, 0, 5, 0);
   rotateX(radians(70));
   popMatrix();
 }
@@ -428,19 +435,18 @@ String[][] pickBests(String[] str) {
   return ranking;
 }
 
-void mouseClicked() {  
-  if (state == 0) state = 1; 
+void mouseClicked() {
   if(state == 1){
-  if(mouseX >=width-144 &&mouseX <=width){
-    if(mouseY >= height-90 &&  mouseY<= height){
-      if(music.isPlaying()){
-         music.pause();
-      }else{
-        music.loop();
+    if(mouseX >=width-144 &&mouseX <=width){
+      if(mouseY >= height-90 &&  mouseY<= height){
+        if(music.isPlaying()){
+           music.pause();
+        }else{
+          music.loop();
+        }
+        au = !au;
       }
-      au = !au;
     }
-  }
   }
   if (state == 2) {
     if (mouseX >= width/2-130 && mouseX <= width/2+130) 
@@ -459,7 +465,8 @@ void keyPressed() {
     state=2; 
     break;
   case ENTER: 
-    if (state > 1) savelog(); 
+    if (state > 1) savelog();
+    if (state == 0) state = 1;
     break;
   case UP: 
     bird.z += 10; 
