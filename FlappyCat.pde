@@ -500,6 +500,8 @@ void FaceDetect(Mat grey) {
     break;
   }
   bird.x=(int)(bird.x + mov);
-
+  if(bird.x < 500-163)bird.x=337;
+  if(bird.x > 500+163)bird.x=500+163;
+  
   faces.release();
 }
