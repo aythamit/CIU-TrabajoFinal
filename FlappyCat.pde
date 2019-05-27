@@ -92,9 +92,9 @@ void generateGravity() {
   if (strength > 1) birdHeigth += gravity;
   else  birdHeigth -= gravity;
 
-  if (birdHeigth >= 250) {
-    bird.z = 250;
-    birdHeigth = 250;
+  if (birdHeigth >= 200) {
+    bird.z = 200;
+    birdHeigth = 200;
   } else  if (birdHeigth <= 0) {
     bird.z = 0;
     birdHeigth = 0;
@@ -182,20 +182,21 @@ void run() {
 
   dibujaSonidoIcon();
   dibujaScore();
+  
   if (cam.available()) {
     cam.read();
     //Obtiene la imagen de la cámara
     img.copy(cam, 0, 0, cam.width, cam.height, 
       0, 0, img.width, img.height);
     img.copyTo();
+    
     pushMatrix();
     translate(0, 0, -50);
     image(img, 300 , 400, 200,200);
     popMatrix();
+    
     //Imagen de grises
     Mat gris = img.getGrey();
-
-    //Imagen de entrada
 
     //Detección y pintado de contenedores
     FaceDetect(gris);
@@ -285,6 +286,7 @@ void dibujaScore() {
   rotateX(radians(70));
   popMatrix();
 }
+
 void dibujaLineasCarretera(int alturaCarretera) {
   int mitad = width / 2;
   fill(255);
