@@ -45,8 +45,8 @@ class Wall {
     }
   }
   void randomWindow() {
-    xWindow =int(random(1, colsWalls));
-    yWindow = int(random(1, rowsWalls));
+    xWindow =int(random(1, colsWalls + 0.99));
+    yWindow = int(random(1, rowsWalls + 0.99));
     //xWindow = 3;
   }
 
